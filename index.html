@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Vuerferl</title>
+    <meta name="description" content="Wuerferl - Dice rolls">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="style.css">
+
+    <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+    <h1 style="text-align:center">Vuerferl</h1>
+    <div id="app">
+        <template>
+            <div class="flex">
+                <div class="bereich verbraucht">
+                    Selected
+                    <div class="wuerfel-container">
+                        <div v-for="wuerfel in verwendet" :key="wuerfel.color">
+                            <wuerfel :color="wuerfel.color" :text-color="wuerfel.textColor" :value="wuerfel.value">
+                            </wuerfel>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex-grow:1">
+                    <div class="bereich tisch">
+                        <div class="flex jb">
+                            <div>Table</div>
+                            <button @click="wurf" v-show="wurfErforderlich" :disabled="wurfInProgress">
+                                <img src="assets/img/rolling-dices.svg" class="icon" /><br>
+                                Roll
+                            </button>
+
+                            <button @click="wurf" v-show="wurfMoeglich" :disabled="wurfInProgress">
+                                <img src="assets/img/cycle.svg" class="icon" /><br>
+                                Reroll
+                            </button>
+
+                            <button @click="reset(false)" v-show="resetErforderlich">
+                                <img src="assets/img/player-next.svg" class="icon" /><br>
+                                Next player
+                            </button>
+
+                        </div>
+
+                        <div class="wuerfel-container" :class="{usable:!wurfErforderlich}">
+                            <div v-for="(wuerfel,index) in tisch" :key="index" @click="verwenden(wuerfel)"
+                                @mouseover="hoverWuerfel(wuerfel)" @mouseleave="hoverWuerfel(null)">
+                                <wuerfel :color="wuerfel.color" :text-color="wuerfel.textColor" :value="wuerfel.value"
+                                    :to-be-removed="hoverValue && wuerfel.value < hoverValue">
+                                </wuerfel>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="bereich tablett">
+                        Tableau
+                        <div class="wuerfel-container">
+                            <div v-for="(wuerfel,index) in tablettSorted" :key="index">
+                                <wuerfel :color="wuerfel.color" :text-color="wuerfel.textColor" :value="wuerfel.value">
+                                </wuerfel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bereich einstellungen">
+                <div class="flex jb">
+                    <div>
+                        <div>Settings</div>
+                        <div v-show="themeSelectable">
+                            <div v-for="(theme, index) in themes" class="theme-selection">
+                                <label>
+
+                                    <span class="theme-name">
+                                        <input v-model="selectedTheme" type="radio" :value="index">
+                                        {{theme.name}}
+                                    </span>
+                                    <span v-for="colors in theme.colors" class="color-patch"
+                                        :style="{'background-color':colors.color}">&nbsp;</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button @click="reset(true)">
+                            <img src="assets/img/anticlockwise-rotation.svg" class="icon" /><br>
+                            Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bereich log" v-if="log.length>0">
+                <div>Log</div>
+                <div v-for="(entry,index) in log" class="flex jc" :key="index">
+                    <div style="align-self: center; padding-right: 0.5rem">
+                        #{{log.length - index}}
+                    </div>
+                    <div class="bereich verbraucht flex">
+                        <wuerfel v-for="(wuerfel,index) in entry.verwendet" :key="index" :color="wuerfel.color"
+                            :text-color="wuerfel.textColor" :value="wuerfel.value">
+                        </wuerfel>
+                    </div>
+                    <div class="bereich tablett flex">
+                        <wuerfel v-for="(wuerfel,index) in entry.tablett" :key="index" :color="wuerfel.color"
+                            :text-color="wuerfel.textColor" :value="wuerfel.value">
+                        </wuerfel>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"
+        integrity="sha512-+Ru50BzEpZjlFzVnjSmJfYFPFfY2hS0Kjlu/IvqaJoux7maF5lJrRVUJWJ2LevPls7rd242GLbWEt+zAo4OVVQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.min.js"
+        integrity="sha512-BKbSR+cfyxLdMAsE0naLReFSLg8/pjbgfxHh/k/kUC82Hy7r6HtR5hLhobaln2gcTvzkyyehrdREdjpsQwy2Jw=="
+        crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+
+    <div style="color: gray; padding: 1rem; margin-top: 2rem; font-size: 0.7rem; text-align:center">
+        Icons made by Delapouite, Lorc. Available on <a href="https://game-icons.net">https://game-icons.net</a>.
+        <br>
+        Provided under the terms of Creative Commons 3.0 BY license.
+    </div>
+</body>
+
+</html>
