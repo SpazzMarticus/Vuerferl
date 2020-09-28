@@ -4,8 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>Vuerferl</title>
-    <meta name="description" content="Wuerferl - Dice rolls">
+    <meta name="description" content="Vuerferl - Roll dice, be clever!">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:image" content="assets/img/rolling-dice-cup.svg" />
 
     <link rel="stylesheet" href="style.css">
 
@@ -16,7 +17,7 @@
     <h1 style="text-align:center">Vuerferl</h1>
     <div id="app">
         <template>
-            <div class="flex">
+            <div class="flex" style="margin: 0.33rem">
                 <div class="bereich verbraucht">
                     Selected
                     <div class="wuerfel-container">
@@ -31,17 +32,17 @@
                         <div class="flex jb">
                             <div>Table</div>
                             <button @click="wurf" v-show="wurfErforderlich" :disabled="wurfInProgress">
-                                <img src="assets/img/rolling-dices.svg" class="icon" /><br>
+                                <img src="assets/img/rolling-dice-cup.svg" class="icon" />
                                 Roll
                             </button>
 
                             <button @click="wurf" v-show="wurfMoeglich" :disabled="wurfInProgress">
-                                <img src="assets/img/cycle.svg" class="icon" /><br>
+                                <img src="assets/img/cycle.svg" class="icon" />
                                 Reroll
                             </button>
 
                             <button @click="reset(false)" v-show="resetErforderlich">
-                                <img src="assets/img/player-next.svg" class="icon" /><br>
+                                <img src="assets/img/player-next.svg" class="icon" />
                                 Next player
                             </button>
 
@@ -51,7 +52,7 @@
                             <div v-for="(wuerfel,index) in tisch" :key="index" @click="verwenden(wuerfel)"
                                 @mouseover="hoverWuerfel(wuerfel)" @mouseleave="hoverWuerfel(null)">
                                 <wuerfel :color="wuerfel.color" :text-color="wuerfel.textColor" :value="wuerfel.value"
-                                    :to-be-removed="hoverValue && wuerfel.value < hoverValue">
+                                    :to-be-removed="!wurfErforderlich && hoverValue && wuerfel.value < hoverValue">
                                 </wuerfel>
                             </div>
                         </div>
@@ -69,33 +70,7 @@
                 </div>
             </div>
 
-            <div class="bereich einstellungen">
-                <div class="flex jb">
-                    <div>
-                        <div>Settings</div>
-                        <div v-show="themeSelectable">
-                            <div v-for="(theme, index) in themes" class="theme-selection">
-                                <label>
-
-                                    <span class="theme-name">
-                                        <input v-model="selectedTheme" type="radio" :value="index">
-                                        {{theme.name}}
-                                    </span>
-                                    <span v-for="colors in theme.colors" class="color-patch"
-                                        :style="{'background-color':colors.color}">&nbsp;</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <button @click="reset(true)">
-                            <img src="assets/img/anticlockwise-rotation.svg" class="icon" /><br>
-                            Reset</button>
-                    </div>
-                </div>
-            </div>
-            <div class="bereich log" v-if="log.length>0">
-                <div>Log</div>
+            <div class="log" v-if="log.length>0">
                 <div v-for="(entry,index) in log" class="flex jc" :key="index">
                     <div style="align-self: center; padding-right: 0.5rem">
                         #{{log.length - index}}
@@ -112,6 +87,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="bereich einstellungen">
+                <div class="flex jb">
+                    <div>Settings</div>
+                    <button @click="reset(true)">
+                        <img src="assets/img/anticlockwise-rotation.svg" class="icon" />
+                        Reset
+                    </button>
+                </div>
+                <div v-show="themeSelectable">
+                    <div v-for="(theme, index) in themes" class="theme-selection">
+                        <label>
+
+                            <span class="theme-name">
+                                <input v-model="selectedTheme" type="radio" :value="index">
+                                {{theme.name}}
+                            </span>
+                            <span v-for="colors in theme.colors" class="color-patch"
+                                :style="{'background-color':colors.color}">&nbsp;</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </template>
     </div>
 
@@ -124,7 +123,8 @@
     <script src="app.js"></script>
 
     <div style="color: gray; padding: 1rem; margin-top: 2rem; font-size: 0.7rem; text-align:center">
-        Icons made by Delapouite, Lorc. Available on <a href="https://game-icons.net" target="_blank" rel="nofollow noopener">https://game-icons.net</a>.
+        Icons made by Delapouite and Lorc, adapted for this page. Available on <a href="https://game-icons.net"
+            target="_blank" rel="nofollow noopener">https://game-icons.net</a>.
         <br>
         Provided under the terms of Creative Commons 3.0 BY license.
     </div>
