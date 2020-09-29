@@ -1,0 +1,25 @@
+{
+  "name": "vuerferl",
+  "version": "0.0.0",
+  "description": "Roll dice, be clever!",
+  "main": "docs/index.html",
+  "dependencies": {
+    "normalize.css": "^8.0.1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpazzMarticus/Vuerferl.git"
+  },
+  "author": "SpazzMarticus",
+  "bugs": {
+    "url": "https://github.com/SpazzMarticus/Vuerferl/issues"
+  },
+  "homepage": "https://github.com/SpazzMarticus/Vuerferl#readme",
+  "private": true
+}
