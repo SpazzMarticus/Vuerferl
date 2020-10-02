@@ -12,30 +12,45 @@ Vue.component('wuerfel', {
     template: `
     <div 
         class="wuerfel"
-        :style="{'background-color':color,color:textColor,opacity:toBeRemoved?0.33:1}"
         >
 
-        <svg viewBox="0 0 100 100">
+        <svg viewBox="0 0 100 100" :fill="color" :opacity="toBeRemoved?0.5:1">
+        <defs>
+            <linearGradient id="corners" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0.3" />
+            </linearGradient>
+      </defs>
+        <g>
+        <!-- face -->
+        <rect x="0" y="0" width="100" height="100" rx="12" :fill="color" />
+        <rect x="0" y="0" width="100" height="100" rx="12" fill="url(#corners)" />
+         <circle cx="50" cy="50" r="48" :fill="color" :opacity="faceOpacity" /> 
+        </g>
+        <g>
+            <!-- pips -->
+
             <!-- center -->
-            <circle cx="50" cy="50" r="15" v-if="value === 1 || value === 3 || value === 5" :fill="textColor"/>
+            <circle r="8" cx="50" cy="50" :fill="pipColor" v-if="value === 1 || value === 3 || value === 5"/>
 
-            <!-- top-left -->
-            <circle cx="15" cy="15" r="15" v-if="value >= 4" :fill="textColor"/>
+            <!-- top-right and bottom-left -->
+            <circle r="8" cx="31" cy="70" :fill="pipColor" v-if="value === 2 || value === 3 || value === 4 || value === 5"/>
+            <circle r="8" cx="69" cy="30" :fill="pipColor" v-if="value === 2 || value === 3 || value === 4 || value === 5"/>
 
-            <!-- bottom-right -->
-            <circle cx="85" cy="85" r="15" v-if="value >= 4" :fill="textColor"/>
+            <!-- top-left and bottom-right -->
+            <circle r="8" cx="31" cy="30" :fill="pipColor" v-if="value === 4 || value === 5"/>
+            <circle r="8" cx="69" cy="70" :fill="pipColor" v-if="value === 4 || value === 5"/>
 
-            <!-- top-right -->
-            <circle cx="85" cy="15" r="15" v-if="value !== 1" :fill="textColor"/>
-
-            <!-- bottom-left -->
-            <circle cx="15" cy="85" r="15" v-if="value !== 1" :fill="textColor"/>
-
-            <!-- middle-left -->
-            <circle cx="15" cy="50" r="15" v-if="value === 6" :fill="textColor"/>
-
-            <!-- middle-right -->
-            <circle cx="85" cy="50" r="15" v-if="value === 6" :fill="textColor"/>
+            <! -- six --> 
+            <circle r="8" cx="31" cy="25" :fill="pipColor" v-if="value === 6"/>
+            <circle r="8" cx="31" cy="50" :fill="pipColor" v-if="value === 6"/>
+            <circle r="8" cx="31" cy="75" :fill="pipColor" v-if="value === 6"/>  
+            <circle r="8" cx="69" cy="25" :fill="pipColor" v-if="value === 6"/>
+            <circle r="8" cx="69" cy="50" :fill="pipColor" v-if="value === 6"/>
+            <circle r="8" cx="69" cy="75" :fill="pipColor" v-if="value === 6"/>            
+            
+        </g>
+            
         </svg>
     </div>
     `,
@@ -44,7 +59,7 @@ Vue.component('wuerfel', {
             type: String,
             required: true,
         },
-        textColor: {
+        pipColor: {
             type: String,
             required: true,
         },
@@ -58,15 +73,20 @@ Vue.component('wuerfel', {
             default: false,
         },
     },
+    computed: {
+        faceOpacity() {
+            return this.pipColor === '#ffffff' ? 0.6 : 0.5;
+        }
+    }
 });
 
 const rollTimeout = 77;
 const rollCount = 3;
 
-function Wuerfel(color, textColor) {
+function Wuerfel(color, pipColor) {
     this.value = randomDiceValue();
     this.color = color;
-    this.textColor = textColor;
+    this.pipColor = pipColor;
     this.rolling = true;
     this.roll = () => {
         const interval = setInterval(() => {
@@ -78,54 +98,105 @@ function Wuerfel(color, textColor) {
         }, rollTimeout * rollCount);
     };
     /**
-        * @todo Status-Flags hinzufügen
-        */
+     * @todo Status-Flags hinzufügen
+     */
     this.roll();
 }
 
-var wuerfelErzeugen = function (color, textColor) {
-    return new Wuerfel(color, textColor);
+var wuerfelErzeugen = function (color, pipColor) {
+    return new Wuerfel(color, pipColor);
 };
 
-const themes = [
-    {
+const themes = [{
         name: "Theme #1",
-        colors: [
-            { color: '#fec015', textColor: '#000000' }, //yellow
-            { color: '#f37120', textColor: '#000000' }, //orange
-            { color: '#653795', textColor: '#ffffff' }, //purple
-            { color: '#0084cd', textColor: '#ffffff' }, //blue
-            { color: '#00935c', textColor: '#ffffff' }, //green
-            { color: '#ffffff', textColor: '#000000' }, //white
+        colors: [{
+                color: '#fec015',
+                pipColor: '#000000',
+            }, //yellow
+            {
+                color: '#f37120',
+                pipColor: '#000000',
+            }, //orange
+            {
+                color: '#653795',
+                pipColor: '#ffffff',
+            }, //purple
+            {
+                color: '#0084cd',
+                pipColor: '#ffffff',
+            }, //blue
+            {
+                color: '#00935c',
+                pipColor: '#ffffff',
+            }, //green
+            {
+                color: '#ffffff',
+                pipColor: '#000000',
+            }, //white
         ]
     },
     {
         name: "Theme #2",
-        colors: [
-            { color: '#fec015', textColor: '#000000' }, //yellow
-            { color: '#dc6b96', textColor: '#000000' }, //pink
-            { color: '#686a6a', textColor: '#ffffff' }, //gray
-            { color: '#1e439c', textColor: '#ffffff' }, //blue
-            { color: '#82c449', textColor: '#000000' }, //green
-            { color: '#ffffff', textColor: '#000000' }, //white
+        colors: [{
+                color: '#fec015',
+                pipColor: '#000000',
+            }, //yellow
+            {
+                color: '#dc6b96',
+                pipColor: '#000000',
+            }, //pink
+            {
+                color: '#686a6a',
+                pipColor: '#ffffff',
+            }, //gray
+            {
+                color: '#1e439c',
+                pipColor: '#ffffff',
+            }, //blue
+            {
+                color: '#82c449',
+                pipColor: '#000000',
+            }, //green
+            {
+                color: '#ffffff',
+                pipColor: '#000000',
+            }, //white
         ]
     },
     {
         name: "Theme #3",
-        colors: [
-            { color: '#fec015', textColor: '#000000' }, //yellow
-            { color: '#dc6b96', textColor: '#000000' }, //pink
-            { color: '#653795', textColor: '#ffffff' }, //purple
-            { color: '#0e8697', textColor: '#ffffff' }, //cyan
-            { color: '#a86f3a', textColor: '#ffffff' }, //brown
-            { color: '#ffffff', textColor: '#000000' }, //white
+        colors: [{
+                color: '#fec015',
+                pipColor: '#000000',
+            }, //yellow
+            {
+                color: '#dc6b96',
+                pipColor: '#000000',
+            }, //pink
+            {
+                color: '#653795',
+                pipColor: '#ffffff',
+            }, //purple
+            {
+                color: '#0e8697',
+                pipColor: '#ffffff',
+            }, //cyan
+            {
+                color: '#a86f3a',
+                pipColor: '#ffffff',
+            }, //brown
+            {
+                color: '#ffffff',
+                pipColor: '#000000',
+            }, //white
         ]
     },
 ];
 
+
 const log = [];
 
-var data = function (vue, selectedTheme = 0) {
+var data = function (vue, selectedTheme) {
     return {
         tisch: [],
         tablett: [],
@@ -133,16 +204,93 @@ var data = function (vue, selectedTheme = 0) {
         wurfErforderlich: true,
         wurfInProgress: false,
         resetErforderlich: false,
-        themeSelectable: true,
         selectedTheme,
-        themes,
         log,
         hoverValue: null,
     };
 }
 
-new Vue({
-    el: '#app',
+Vue.component('game', {
+    template: `<div>
+    <div class="play-area">
+        <div class="selected">
+            <div class="dice-container">
+                <div v-for="wuerfel in verwendet" :key="wuerfel.color">
+                    <wuerfel :color="wuerfel.color" :pip-color="wuerfel.pipColor" :value="wuerfel.value">
+                    </wuerfel>
+                </div>
+                <div v-for="index in 3-verwendet.length" :key="'e'+index" class="wuerfel wuerfel-empty">
+                </div>
+            </div>
+        </div>
+        <div class="table">
+        <div>
+            <button  @click="wurf" v-show="wurfErforderlich" :disabled="wurfInProgress">
+                <img src="assets/img/rolling-dice-cup.svg" class="icon" />
+                Roll
+            </button>
+
+            <div class="right" v-show="wurfMoeglich">
+            <button @click="wurf" :disabled="wurfInProgress">
+                <img src="assets/img/cycle.svg" class="icon" />
+                Reroll
+            </button>
+            </div>
+
+            <button class="centered-axis-xy" @click="reset(false)" v-show="resetErforderlich">
+                <img src="assets/img/player-next.svg" class="icon" />
+                Next player
+            </button>
+            </div>
+
+            <div class="dice-container" :class="{usable:!wurfErforderlich}">
+                <div v-for="(wuerfel,index) in tisch" :key="index" @click="verwenden(wuerfel)"
+                    @mouseover="hoverWuerfel(wuerfel)" @mouseleave="hoverWuerfel(null)">
+                    <wuerfel :color="wuerfel.color" :pip-color="wuerfel.pipColor" :value="wuerfel.value"
+                        :to-be-removed="!wurfErforderlich && hoverValue && wuerfel.value < hoverValue">
+                    </wuerfel>
+                </div>
+            </div>
+        </div>
+        <div class="tray">
+            <div class="dice-container">
+                    <wuerfel v-for="(wuerfel,index) in tablettSorted" :key="index" :color="wuerfel.color" :pip-color="wuerfel.pipColor" :value="wuerfel.value">
+                    </wuerfel>
+            </div>
+        </div>
+    </div>
+
+    <div class="log" v-if="log.length>0">
+        <div v-for="(entry,index) in log" class="log-entry" :key="index">
+            <div>
+                #{{log.length - index}}
+            </div>
+            <div class="areas">
+            <div class="selected">
+            <div class="dice-container">
+                    <wuerfel v-for="(wuerfel,index) in entry.verwendet" :key="index" :color="wuerfel.color"
+                        :pip-color="wuerfel.pipColor" :value="wuerfel.value">
+                    </wuerfel>
+                </div>
+                </div>
+                <div class="tray">
+                <div class="dice-container">
+                    <wuerfel v-for="(wuerfel,index) in entry.tablett" :key="index" :color="wuerfel.color"
+                        :pip-color="wuerfel.pipColor" :value="wuerfel.value">
+                    </wuerfel>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>`,
+    props: {
+        theme: {
+            required: true,
+            type: Object,
+        }
+    },
     data,
     computed: {
         tablettSorted() {
@@ -157,26 +305,24 @@ new Vue({
     methods: {
         tischFuellen() {
             this.tisch = [
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[0].color, this.themes[this.selectedTheme].colors[0].textColor),
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[1].color, this.themes[this.selectedTheme].colors[1].textColor),
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[2].color, this.themes[this.selectedTheme].colors[2].textColor),
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[3].color, this.themes[this.selectedTheme].colors[3].textColor),
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[4].color, this.themes[this.selectedTheme].colors[4].textColor),
-                wuerfelErzeugen(this.themes[this.selectedTheme].colors[5].color, this.themes[this.selectedTheme].colors[5].textColor),
+                wuerfelErzeugen(this.theme.colors[0].color, this.theme.colors[0].pipColor),
+                wuerfelErzeugen(this.theme.colors[1].color, this.theme.colors[1].pipColor),
+                wuerfelErzeugen(this.theme.colors[2].color, this.theme.colors[2].pipColor),
+                wuerfelErzeugen(this.theme.colors[3].color, this.theme.colors[3].pipColor),
+                wuerfelErzeugen(this.theme.colors[4].color, this.theme.colors[4].pipColor),
+                wuerfelErzeugen(this.theme.colors[5].color, this.theme.colors[5].pipColor),
             ];
         },
 
         wurf() {
-            this.themeSelectable = false;
             this.wurfInProgress = true;
             if (!this.tisch.length) {
                 this.tischFuellen();
-            }
-            else {
+            } else {
                 this.tisch = this.tisch.map(wuerfel => {
                     return wuerfelErzeugen(
                         wuerfel.color,
-                        wuerfel.textColor,
+                        wuerfel.pipColor,
                     );
                 });
             }
@@ -201,8 +347,7 @@ new Vue({
         },
         verwenden(ausgewaehlterWuerfel) {
             //Solange der Würfel rollt, darf er nicht ausgewählt werden
-            if(ausgewaehlterWuerfel.rolling)
-            {
+            if (ausgewaehlterWuerfel.rolling) {
                 return;
             }
             //Vor der Verwendung muss gewürfelt werden
@@ -216,11 +361,9 @@ new Vue({
             this.tisch = this.tisch.reduce((tisch, wuerfel) => {
                 if (wuerfel === ausgewaehlterWuerfel) {
                     this.verwendet.push(wuerfel);
-                }
-                else if (wuerfel.value < ausgewaehlterWuerfel.value) {
+                } else if (wuerfel.value < ausgewaehlterWuerfel.value) {
                     this.tablett.push(wuerfel);
-                }
-                else {
+                } else {
                     tisch.push(wuerfel);
                 }
                 return tisch;
@@ -232,23 +375,21 @@ new Vue({
                 this.tisch = [];
 
                 this.resetErforderlich = true;
-            }
-            else if (this.tisch.length) {
+            } else if (this.tisch.length) {
                 //Falls Tisch nicht leer, Wurf erforderlich
                 this.wurfErforderlich = true;
-            }
-            else {
+            } else {
                 this.resetErforderlich = true;
             }
+            this.hoverValue = null; //Zurücksetzen
         },
-        hoverWuerfel(wuerfel){
+        hoverWuerfel(wuerfel) {
             this.hoverValue = wuerfel ? wuerfel.value : null;
         },
-        reset(clearLog=false) {
+        reset(clearLog = false) {
             if (clearLog) {
                 this.log.length = 0; //Empty array without creating a new instance
-            }
-            else {
+            } else {
                 this.log.unshift({
                     tablett: this.tablett,
                     verwendet: this.verwendet
@@ -257,8 +398,27 @@ new Vue({
             Object.assign(this.$data, data(null, this.selectedTheme));
         }
     }
-
 });
+
+new Vue({
+    el: '#app',
+    data() {
+        return {
+            themes,
+            selectedTheme: 0,
+            running: false,
+        };
+    },
+    methods: {
+        reset() {
+            this.running = false;
+            this.$refs.game.reset(true);
+        }
+    }
+});
+
+
+new Vue();
 
 /**
  * @todo Lots of renaming and refactoring

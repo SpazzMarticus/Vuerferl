@@ -5,6 +5,7 @@
  * 1. Correct the line height in all browsers.
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap");
 html {
   line-height: 1.15;
   /* 1 */
@@ -303,140 +304,193 @@ template {
 [hidden] {
   display: none; }
 
-/* Custom styles */
 html {
   font-size: 1rem;
-  font-family: "Arial"; }
+  font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background-color: #fdfdfd; }
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    html {
+      font-size: 0.9rem; } }
 
 body {
   max-width: 800px;
-  margin: 2rem auto; }
+  margin: 2rem auto;
+  padding: 0 1rem; }
 
 .flex {
   display: flex; }
+  .flex.jb {
+    justify-content: space-between; }
+  .flex.jc {
+    justify-content: center; }
 
-.flex.jb {
-  justify-content: space-between; }
+.center {
+  text-align: center; }
 
-.flex.jc {
-  justify-content: center; }
+.right {
+  text-align: right; }
 
-.bereich {
-  border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0.33rem; }
+.centered-axis-xy {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
 
-.bereich.tisch {
-  background-color: #d1b494;
-  border-radius: 0 0.5rem 0 0; }
-
-.bereich.einstellungen {
-  font-size: 0.8rem;
-  margin: 0.33rem; }
-
-.bereich.tisch button, .bereich.einstellungen button {
-  margin-right: -.1rem;
-  margin-top: -.25rem; }
-
-.bereich.verbraucht {
-  background-color: #3b3a42;
-  color: white;
-  margin-right: 0;
-  border-radius: 0.5rem 0 0 0.5rem; }
-
-.bereich.tablett {
-  border-radius: 0 0 0.5rem 0; }
-
-.wuerfel-container {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  /**
-       * @todo Displaying 5 dice results in a space between the last two die
-       */ }
-
-.verbraucht .wuerfel-container {
-  flex-direction: column;
-  align-items: center; }
-
-.verbraucht .wuerfel {
-  margin-right: 0; }
-
-.wuerfel {
-  flex: 0 0 auto;
-  margin: 0 0 0.33rem 0;
-  padding: 0.5rem;
-  border: 2px solid black;
-  border-radius: 0.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  cursor: not-allowed; }
-
-.usable .wuerfel {
-  cursor: pointer; }
+.play-area {
+  display: grid;
+  grid-template-areas: "selected table" "selected tray";
+  grid-template-columns: 1fr 3fr; }
+  .play-area > * {
+    position: relative;
+    padding: 0.33rem; }
+  .play-area .selected {
+    grid-area: selected;
+    background-color: #3b3a42;
+    color: white;
+    border-radius: 0.33rem 0 0 0.33rem; }
+    .play-area .selected .dice-container {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      grid-template-columns: 1fr; }
+      .play-area .selected .dice-container .wuerfel-empty {
+        cursor: default;
+        background-color: rgba(255, 255, 255, 0.1);
+        position: relative;
+        border-radius: 0.33rem; }
+        .play-area .selected .dice-container .wuerfel-empty:after {
+          position: absolute;
+          text-align: center;
+          display: block;
+          width: 100%;
+          height: 100%;
+          top: 50%;
+          line-height: 0;
+          color: #ebdac7;
+          font-weight: bold;
+          font-size: 1.2rem; }
+        .play-area .selected .dice-container .wuerfel-empty:nth-child(1):after {
+          content: "I"; }
+        .play-area .selected .dice-container .wuerfel-empty:nth-child(2):after {
+          content: "II"; }
+        .play-area .selected .dice-container .wuerfel-empty:nth-child(3):after {
+          content: "III"; }
+  .play-area .table {
+    grid-area: table;
+    background-color: #d1b494;
+    border-radius: 0 0.33rem 0 0; }
+  .play-area .tray {
+    grid-area: tray;
+    background-color: #cccccc;
+    border-radius: 0 0 0.33rem 0; }
+  .play-area .table .dice-container,
+  .play-area .tray .dice-container {
+    grid-template-columns: 1fr 1fr 1fr; }
+  @media screen and (min-width: 28.82rem) {
+    .play-area .table .dice-container,
+    .play-area .tray .dice-container {
+      grid-template-columns: repeat(6, 1fr); } }
+  .play-area .dice-container {
+    display: grid;
+    grid-row-gap: 0.25rem;
+    grid-column-gap: 0.25rem;
+    justify-items: center;
+    align-items: center;
+    min-height: 3.5rem;
+    margin: 0.33rem 0 0.33rem 0; }
+  .play-area .wuerfel {
+    width: 3.5rem;
+    height: 3.5rem;
+    cursor: not-allowed; }
+  .play-area .usable .wuerfel {
+    cursor: pointer; }
 
 button {
-  background-color: lightblue;
-  padding: 0.4rem;
+  background-color: #fdfdfd;
+  padding: 0.5rem 0.66rem;
   margin: 0.2rem;
   cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.45);
-  vertical-align: baseline; }
-
-button.disabled {
-  background-color: #6c757d;
-  cursor: not-allowed; }
-
-button .icon {
-  width: 1.66rem;
-  height: 1.66rem;
-  margin-top: -0.33rem;
-  margin-bottom: -0.33rem; }
-
-.theme-selection {
-  margin-bottom: 0.5rem; }
-
-.theme-name {
-  height: 1.5rem;
-  vertical-align: bottom; }
-
-.color-patch {
-  width: 1.5rem;
-  height: 1.5rem;
+  border: 3px solid black;
   border-radius: 0.33rem;
-  display: inline-block;
-  margin-right: 0.1rem; }
+  vertical-align: baseline; }
+  button:disabled {
+    background-color: #fdfdfd;
+    border-color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed; }
+    button:disabled .icon {
+      opacity: 0.5; }
+  button .icon {
+    width: 1.66rem;
+    height: 1.66rem;
+    margin-top: -0.33rem;
+    margin-bottom: -0.33rem; }
+
+.settings {
+  margin-bottom: 0.33rem; }
+  .settings .theme-selection {
+    background-color: #dedede;
+    border-radius: 0.33rem;
+    padding: 0.33rem; }
+  .settings .theme {
+    margin-bottom: 0.5rem;
+    padding: 0.33rem; }
+    .settings .theme label {
+      display: flex;
+      align-items: center; }
+    .settings .theme input {
+      margin-right: 0.33rem;
+      flex-grow: 0; }
+  .settings .dice-container {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    cursor: pointer; }
+  .settings .wuerfel {
+    flex: 1 1 auto;
+    margin: 0.1rem;
+    max-width: 3.5rem;
+    max-height: 3.5rem; }
 
 .log {
+  margin-top: 1rem;
   background-color: transparent;
   border-radius: 0; }
+  .log .log-entry {
+    display: flex;
+    grid-template-columns: 1fr 2fr 2fr;
+    justify-content: space-evenly;
+    margin-bottom: 0.25rem;
+    align-items: center; }
+  .log .areas {
+    display: flex; }
+  .log .selected,
+  .log .tray {
+    padding: 0.33rem; }
+  .log .selected {
+    background-color: #3b3a42;
+    border-radius: 0.33rem 0 0 0.33rem; }
+  .log .tray {
+    background-color: #cccccc;
+    border-radius: 0 0.33rem 0.33rem 0; }
+  .log .dice-container {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    cursor: pointer; }
+  .log .wuerfel {
+    margin: 0.1rem;
+    width: 2.8rem;
+    height: 2.8rem; }
 
-.log .wuerfel {
-  width: 1rem;
-  height: 1rem;
-  padding: 0.2rem;
-  border-radius: 0.33rem; }
+.reset-container {
+  margin-top: 5rem; }
 
-.log .bereich {
-  margin: 0 0 0.5rem 0;
-  padding: 0.5rem 0.5rem 0 0.5rem; }
-
-.log .bereich.verbraucht {
-  border-radius: 0.25rem 0 0 0.25rem; }
-
-.log .bereich.tablett {
-  border-radius: 0 0.25rem 0.25rem 0; }
-
-.log .bereich .wuerfel {
-  margin: 0 0 0.5rem 0.5rem; }
-
-.log .bereich .wuerfel:first-child {
-  margin-left: 0; }
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .wuerfel {
-    width: 2rem;
-    height: 2rem; } }
+.footer {
+  color: gray;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 1.5; }

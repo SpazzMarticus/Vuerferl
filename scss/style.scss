@@ -1,161 +1,321 @@
 @import "node_modules/normalize.css/normalize";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+$bodyPadding: 1rem;
+$playAreaPadding: 0.33rem;
+$playAreaSelectedMargin: 0.5rem;
+$defaultBorderRadius: 0.33rem;
+$diceSize: 3.5rem;
 
 
-  /* Custom styles */
+$themeBackground: #fdfdfd;
 
-  html{
-      font-size: 1rem;
-      font-family: "Arial";
+
+$themeSelected: #3b3a42;
+$themeTable: #d1b494;
+$themeTray: #cccccc;
+$themeSettings: #dedede;
+
+
+
+html {
+  font-size: 1rem;
+  font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  @media (-webkit-min-device-pixel-ratio: 2),
+  (min-resolution: 192dpi) {
+    font-size: 0.9rem;
   }
 
-  body{
-      max-width: 800px;
-      margin: 2rem auto;
-  }
+  background-color: $themeBackground;
 
-  .flex{
-      display: flex;
-  }
-  .flex.jb{
+}
+
+
+body {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 $bodyPadding;
+}
+
+.flex {
+  display: flex;
+
+  &.jb {
     justify-content: space-between;
+
   }
-  .flex.jc{
+
+  &.jc {
     justify-content: center;
   }
+}
 
-  .bereich{
-      border-radius: 0.5rem;
-      background-color: rgba(0,0,0,.1);
-      padding: 0.33rem;
-  }
-  .bereich.tisch{
-      background-color: #d1b494;
-      border-radius: 0 0.5rem 0 0;
+.center {
+  text-align: center;
+}
+.right{
+  text-align: right;
+}
+
+.centered-axis-xy {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.play-area {
+  display: grid;
+  grid-template-areas: "selected table"
+    "selected tray";
+  grid-template-columns: 1fr 3fr;
+
+  >* {
+    position: relative;
+    padding: $playAreaPadding;
   }
 
-  .bereich.einstellungen{
-    font-size: 0.8rem;
-    margin: 0.33rem;
-  }
-  .bereich.tisch button, .bereich.einstellungen button{
-    margin-right: -.1rem;
-    margin-top: -.25rem;
-  }
-  .bereich.verbraucht{
-    background-color: #3b3a42;
+  .selected {
+    grid-area: selected;
+    background-color: $themeSelected;
     color: white;
-    margin-right: 0;
-    border-radius: 0.5rem 0 0 0.5rem ;
-}
-.bereich.tablett{
-  border-radius: 0 0 0.5rem 0;
-}
+    border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
 
-  .wuerfel-container{
-      margin-top: 0.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      /**
-       * @todo Displaying 5 dice results in a space between the last two die
-       */
+    .dice-container {
+      margin-left: $playAreaSelectedMargin;
+      margin-right: $playAreaSelectedMargin;
+      grid-template-columns: 1fr;
+
+      .wuerfel-empty {
+        cursor: default;
+        background-color: rgba(255, 255, 255, 0.1);
+        position: relative;
+        border-radius: 0.33rem;
+
+        &:after {
+          position: absolute;
+          text-align: center;
+          display: block;
+          width: 100%;
+          height: 100%;
+          top: 50%;
+          line-height: 0;
+          color: #ebdac7;
+          font-weight: bold;
+          font-size: 1.2rem;
+
+        }
+
+        &:nth-child(1) {
+          &:after {
+            content: "I";
+          }
+        }
+
+        &:nth-child(2) {
+          &:after {
+            content: "II";
+          }
+        }
+
+        &:nth-child(3) {
+          &:after {
+            content: "III";
+          }
+        }
+      }
+    }
+
   }
 
-  .verbraucht .wuerfel-container{
-    flex-direction: column;
+  .table {
+    grid-area: table;
+    background-color: $themeTable;
+    border-radius: 0 $defaultBorderRadius 0 0;
+
+  }
+
+  .tray {
+    grid-area: tray;
+    background-color: $themeTray;
+    border-radius: 0 0 $defaultBorderRadius 0;
+  }
+
+  .table,
+  .tray {
+    .dice-container {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  @media screen and (min-width: (2*$bodyPadding) + (4*$playAreaPadding) + (2*$playAreaSelectedMargin) + (7*$diceSize)) {
+
+    .table,
+    .tray {
+      .dice-container {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+  }
+
+
+  .dice-container {
+    display: grid;
+    grid-row-gap: 0.25rem;
+    grid-column-gap: 0.25rem;
+    justify-items: center;
     align-items: center;
+    min-height: $diceSize;
+    margin: 0.33rem 0 0.33rem 0;
   }
-  .verbraucht .wuerfel{
-    margin-right: 0;
+
+
+  .wuerfel {
+    width: $diceSize;
+    height: $diceSize;
+
+    cursor: not-allowed;
   }
 
-
-  .wuerfel{
-      flex: 0 0 auto;
-      margin: 0 0 0.33rem 0;
-      padding: 0.5rem;
-      border: 2px solid black;
-      border-radius: 0.5rem;
-
-      width: 2.5rem;
-      height: 2.5rem;
-
-      cursor: not-allowed;
-  }
-  .usable .wuerfel{
+  .usable .wuerfel {
     cursor: pointer;
   }
+}
 
-  button{
-    background-color: lightblue;
-    padding: 0.4rem;
-    margin: 0.2rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.45);
-    vertical-align: baseline;
-  }
-  button.disabled{
-    background-color: #6c757d;
-    cursor:not-allowed;
+
+button {
+  background-color: $themeBackground;;
+  padding: 0.5rem 0.66rem;
+  margin: 0.2rem;
+  cursor: pointer;
+  border: 3px solid black;
+  border-radius: $defaultBorderRadius;
+  vertical-align: baseline;
+
+  &:hover {
   }
 
-  button .icon{
+  &:disabled {
+    background-color: $themeBackground;
+    border-color: rgba(0,0,0,0.5);
+    color: rgba(0,0,0,0.5);
+    cursor: not-allowed;
+
+    .icon{
+      opacity: 0.5;
+    }
+  }
+
+  .icon {
     width: 1.66rem;
     height: 1.66rem;
     margin-top: -0.33rem;
     margin-bottom: -0.33rem;
   }
-  .theme-selection{
-    margin-bottom: 0.5rem;
-  }
-  .theme-name{
-    height: 1.5rem;
-    vertical-align: bottom;
-  }
-
-  .color-patch{
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.33rem;
-    display: inline-block;
-    margin-right: 0.1rem;
-  }
-
-  .log{
-    background-color: transparent;
-    border-radius: 0;
-  }
-  .log .wuerfel{
-    width: 1rem;
-    height: 1rem;
-    padding: 0.2rem;
-    border-radius: 0.33rem;
-  }
-  .log .bereich{
-    margin: 0 0 0.5rem 0;
-    padding: 0.5rem 0.5rem 0 0.5rem;
-  }
-  .log .bereich.verbraucht {
-    border-radius: 0.25rem 0 0 0.25rem;
-  }
-  .log .bereich.tablett {
-    border-radius: 0 0.25rem 0.25rem 0;
-
-  }
-  .log .bereich .wuerfel{
-    margin: 0 0 0.5rem 0.5rem;
-  }
-  .log .bereich .wuerfel:first-child{
-    margin-left: 0;
-  }
-
-  @media 
-(-webkit-min-device-pixel-ratio: 2), 
-(min-resolution: 192dpi) { 
-  .wuerfel{
-    width: 2rem;
-    height: 2rem;
 }
+
+
+.settings {
+  margin-bottom: 0.33rem;
+
+  .theme-selection {
+    background-color: $themeSettings;
+    border-radius: $defaultBorderRadius;
+    padding: 0.33rem;
+  }
+
+  .theme {
+    margin-bottom: 0.5rem;
+    padding: 0.33rem;
+
+    label {
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      margin-right: 0.33rem;
+      flex-grow: 0;
+    }
+  }
+
+  .dice-container {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    cursor: pointer;
+  }
+
+  .wuerfel {
+    flex: 1 1 auto;
+    margin: 0.1rem;
+    max-width: $diceSize;
+    max-height: $diceSize;
+  }
+}
+
+.log {
+  margin-top: 1rem;
+
+  background-color: transparent;
+  border-radius: 0;
+
+  .log-entry {
+    display: flex;
+    grid-template-columns: 1fr 2fr 2fr;
+    justify-content: space-evenly;
+    margin-bottom: 0.25rem;
+    align-items: center;
+  }
+
+  .areas {
+    display: flex;
+  }
+
+  .selected,
+  .tray {
+    padding: 0.33rem;
+  }
+
+  .selected {
+    background-color: $themeSelected;
+    border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
+  }
+
+  .tray {
+    background-color: $themeTray;
+    border-radius: 0 $defaultBorderRadius $defaultBorderRadius 0;
+  }
+
+  .dice-container {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    cursor: pointer;
+  }
+
+  .wuerfel {
+    margin: 0.1rem;
+    width: $diceSize *0.8;
+    height: $diceSize * 0.8;
+  }
+
+}
+
+.reset-container {
+  margin-top: 5rem;
+}
+
+.footer {
+  color: gray;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 1.5;
 }
