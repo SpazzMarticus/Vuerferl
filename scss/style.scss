@@ -254,6 +254,12 @@ button{
   border-radius: $defaultBorderRadius;
   vertical-align: baseline;
 
+  @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
+      padding: 0.66rem 1rem 0.66rem 1rem;
+      margin: 0.33rem;
+    }
+
   &:hover {}
 
   &:disabled {

@@ -450,6 +450,10 @@ button {
   border: 3px solid black;
   border-radius: 0.33rem;
   vertical-align: baseline; }
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .button {
+      padding: 0.66rem 1rem 0.66rem 1rem;
+      margin: 0.33rem; } }
   .button:disabled {
     background-color: #fdfdfd;
     border-color: rgba(0, 0, 0, 0.5);
