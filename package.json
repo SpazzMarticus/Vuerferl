@@ -4,13 +4,20 @@
   "description": "Roll dice, be clever!",
   "main": "docs/index.html",
   "dependencies": {
-    "normalize.css": "^8.0.1"
+    "normalize.css": "^8.0.1",
+    "seedrandom": "^3.0.5",
+    "vue": "^2.6.12"
   },
   "devDependencies": {
-    "node-sass": "^4.14.1"
+    "node-sass": "^4.14.1",
+    "vue-loader": "^15.9.3",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --production",
+    "watch": "node ./node_modules/node-sass/bin/node-sass --watch ./scss/ -o ./docs/assets/css/"
   },
   "repository": {
     "type": "git",

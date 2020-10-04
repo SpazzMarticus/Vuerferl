@@ -11,11 +11,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <meta name="theme-color" content="#fafafa">
+    <meta name="theme-color" content="#fdfdfd">
+
+    <link rel="icon" type="image/svg+xml" href="assets/img/dice.svg">
 </head>
 
 <body>
-    <h1 class="center">Vuerferl</h1>
+
+    <div class="header">
+        <h1>Vuerferl</h1>
+        <p>Roll dice, be <i>clever</i>!</p>
+    </div>
+
     <div id="app">
         <template>
 
@@ -35,7 +42,7 @@
                 </div>
 
                 <div class="center">
-                    <button @click="running=true">
+                    <button class="button button-large" @click="run()">
                         <img src="assets/img/play-button.svg" class="icon" />
                         Play
                     </button>
@@ -44,13 +51,19 @@
 
             <game :theme="themes[selectedTheme]" v-show="running" ref="game"></game>
 
+            <div class="reset-container center" v-show="running">
+                <dropdown style="display: inline-block" ref="reset">
+                    <template v-slot:button>
+                        Danger Zone
+                    </template>
+                    <template v-slot:drop>
+                        <button class="button" @click="$refs.reset.close(); reset(true)">
+                            <img src="assets/img/anticlockwise-rotation.svg" class="icon" />
+                            Reset
+                        </button>
+                    </template>
+                </dropdown>
 
-
-            <div class="reset-container center">
-                <button @click="reset(true)" v-show="running">
-                    <img src="assets/img/anticlockwise-rotation.svg" class="icon" />
-                    Reset
-                </button>
             </div>
 
         </template>
@@ -71,17 +84,6 @@
         </p>
     </div>
 
-
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"
-        integrity="sha512-+Ru50BzEpZjlFzVnjSmJfYFPFfY2hS0Kjlu/IvqaJoux7maF5lJrRVUJWJ2LevPls7rd242GLbWEt+zAo4OVVQ=="
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.min.js"
-        integrity="sha512-BKbSR+cfyxLdMAsE0naLReFSLg8/pjbgfxHh/k/kUC82Hy7r6HtR5hLhobaln2gcTvzkyyehrdREdjpsQwy2Jw=="
-        crossorigin="anonymous"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.js"
-        integrity="sha512-YXLGLsQBiwHPHLCAA9npZWhADUsHECjkZ71D1uzT2Hpop82/eLnmFb6b0jo8pK4T0Au0g2FETrRJNblF/46ZzQ=="
-        crossorigin="anonymous"></script> -->
     <script src="assets/js/app.js"></script>
 </body>
 
