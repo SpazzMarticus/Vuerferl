@@ -68,8 +68,12 @@ a {
   color: $themeTextLight;
   text-align: center;
 
-  h1 {
+  h1,h2 {
     margin-bottom: 0.5rem;
+  }
+
+  h2{
+    margin-top: 2rem;
   }
 
   p {

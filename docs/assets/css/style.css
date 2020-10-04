@@ -338,8 +338,10 @@ a {
 .header {
   color: #575757;
   text-align: center; }
-  .header h1 {
+  .header h1, .header h2 {
     margin-bottom: 0.5rem; }
+  .header h2 {
+    margin-top: 2rem; }
   .header p {
     margin: 0 0 1rem 0; }
 
