@@ -22,14 +22,7 @@ $themeSettings: #dedede;
 html {
   font-size: 1rem;
   font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-  @media (-webkit-min-device-pixel-ratio: 2),
-  (min-resolution: 192dpi) {
-    font-size: 0.9rem;
-  }
-
   background-color: $themeBackground;
-
 }
 
 
