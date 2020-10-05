@@ -1,10 +1,9 @@
-
 <template>
   <div>
     <div class="play-area">
       <div class="selected">
         <div class="dice-container">
-          <div v-for="wuerfel in verwendet" :key="wuerfel.color">
+          <div v-for="wuerfel in used" :key="wuerfel.color">
             <wuerfel
               :color="wuerfel.color"
               :pip-color="wuerfel.pipColor"
@@ -13,7 +12,7 @@
             </wuerfel>
           </div>
           <div
-            v-for="index in 3 - verwendet.length"
+            v-for="index in 3 - used.length"
             :key="'e' + index"
             class="wuerfel wuerfel-empty"
           ></div>
@@ -31,10 +30,10 @@
                 class="button"
                 @click="
                   closeDropdown();
-                  wurf();
+                  roll();
                 "
-                v-show="wurfErforderlich"
-                :disabled="wurfInProgress"
+                v-show="rollRequired"
+                :disabled="rollInProgress"
               >
                 <img src="assets/img/rolling-dice-cup.svg" class="icon" />
                 Roll
@@ -47,10 +46,10 @@
               class="button"
               @click="
                 closeDropdown();
-                wurf();
+                roll();
               "
               v-show="actionAvailableReroll"
-              :disabled="wurfInProgress"
+              :disabled="rollInProgress"
             >
               <img src="assets/img/cycle.svg" class="icon" />
               Reroll
@@ -77,7 +76,6 @@
               <img src="assets/img/trash-can.svg" class="icon" />
               Discard
             </button>
-            <button class="button" @click="closeDropdown">X</button>
           </template>
           <template v-slot:portalAfter>
             <div class="right">
@@ -93,7 +91,7 @@
           </template>
         </dropdown>
 
-        <div class="dice-container" :class="{ usable: !wurfErforderlich }">
+        <div class="dice-container" :class="{ usable: actionAvailableUse }">
           <wuerfel
             v-for="(wuerfel, index) in tisch"
             :key="index"
@@ -101,9 +99,9 @@
             :pip-color="wuerfel.pipColor"
             :value="wuerfel.value"
             :to-be-removed="
-              !wurfErforderlich && hoverValue && wuerfel.value < hoverValue
+              actionAvailableUse && hoverValue && wuerfel.value < hoverValue
             "
-            :mouse-events="!wurfErforderlich"
+            :mouse-events="actionAvailableUse"
             @click="
               closeDropdown();
               verwenden(wuerfel);
@@ -118,7 +116,7 @@
         <div class="center" v-if="reuseActive">Select dice to reuse.</div>
         <div class="dice-container" :class="{ usable: reuseActive }">
           <wuerfel
-            v-for="(wuerfel, index) in tablett"
+            v-for="(wuerfel, index) in tray"
             :key="index"
             :color="wuerfel.color"
             :pip-color="wuerfel.pipColor"
@@ -138,7 +136,7 @@
       <div v-for="(entry, index) in log" class="log-entry" :key="index">
         <div class="index">#{{ log.length - index }}</div>
         <div
-          v-for="(wuerfel, index) in entry.verwendet"
+          v-for="(wuerfel, index) in entry.used"
           :key="'s' + index"
           class="selected"
         >
@@ -150,7 +148,7 @@
           </wuerfel>
         </div>
         <div
-          v-for="(wuerfel, index) in entry.tablett"
+          v-for="(wuerfel, index) in entry.tray"
           :key="'t' + index"
           class="tray"
         >
@@ -188,9 +186,6 @@ function Wuerfel(color, pipColor) {
       this.rolling = false;
     }, rollTimeout * rollCount);
   };
-  /**
-   * @todo Status-Flags hinzufügen
-   */
   this.roll();
 }
 
@@ -198,18 +193,26 @@ const log = [];
 
 const data = function (vue, selectedTheme) {
   return {
-    pristine: true,
+    /**
+     * dice
+     */
     tisch: [],
-    tablett: [],
-    verwendet: [],
-    wuerfelVerwendet: true,
-    wurfInProgress: false,
-    // resetErforderlich: false,
+    tray: [],
+    used: [],
+    /**
+     * state
+     */
+    pristine: true,
+    diceUsed: true,
+    rollInProgress: false,
     selectedTheme,
-    log,
     hoverValue: null,
     reuseActive: false,
     reuseUsed: false,
+    /**
+     * log-entries
+     */
+    log,
   };
 };
 
@@ -225,27 +228,29 @@ export default {
   computed: {
     resetErforderlich() {
       return (
-        !this.pristine &&
-        (this.verwendet.length === 3 || this.tisch.length === 0)
+        !this.pristine && (this.used.length === 3 || this.tisch.length === 0)
       );
     },
-    wurfErforderlich() {
+    rollRequired() {
       return (
         !this.resetErforderlich &&
-        (this.wuerfelVerwendet || this.reuseUsed || this.tisch.length === 0)
+        (this.diceUsed || this.reuseUsed || this.tisch.length === 0)
       );
     },
+    actionAvailableUse(){
+      return !this.rollRequired;
+    },
     actionAvailableReroll() {
-      return !this.wurfErforderlich && this.tisch.length > 0;
+      return !this.rollRequired && this.tisch.length > 0;
     },
     actionAvailableDiscard() {
       return this.tisch.length > 0;
     },
     actionAvailableReuse() {
       return (
-        this.tablett.length > 0 &&
+        this.tray.length > 0 &&
         !this.actionAvailableReroll &&
-        this.verwendet.length < 3
+        this.used.length < 3
       );
     },
     actionAvailable() {
@@ -257,7 +262,7 @@ export default {
     },
   },
   methods: {
-    tischFuellen() {
+    fillTable() {
       this.tisch = [
         new Wuerfel(this.theme.colors[0].color, this.theme.colors[0].pipColor),
         new Wuerfel(this.theme.colors[1].color, this.theme.colors[1].pipColor),
@@ -270,22 +275,22 @@ export default {
     closeDropdown() {
       this.$refs.actions.close();
     },
-    wurf() {
+    roll() {
       this.pristine = false;
       this.reuseUsed = false;
-      this.wurfInProgress = true;
+      this.rollInProgress = true;
       if (!this.tisch.length) {
-        this.tischFuellen();
+        this.fillTable();
       } else {
         this.tisch = this.tisch.map((wuerfel) => {
           return new Wuerfel(wuerfel.color, wuerfel.pipColor);
         });
       }
 
-      this.wuerfelVerwendet = false;
-      this.tischSortieren();
+      this.diceUsed = false;
+      this.sortTable();
     },
-    tischSortieren() {
+    sortTable() {
       const sort = () => {
         this.tisch.sort((a, b) => {
           return a.value < b.value ? 1 : -1;
@@ -297,73 +302,78 @@ export default {
       setTimeout(() => {
         clearInterval(interval);
         sort();
-        this.wurfInProgress = false;
+        this.rollInProgress = false;
       }, rollTimeout * rollCount);
     },
     verwenden(ausgewaehlterWuerfel) {
-      //Solange der Würfel rollt, darf er nicht ausgewählt werden
+      //While dice are rolling, don't use them
       if (ausgewaehlterWuerfel.rolling) {
-        return;
+        console.log('rolling');
+                return;
       }
       //Vor der Verwendung muss gewürfelt werden
-      if (this.wuerfelVerwendet) {
+      if (this.diceUsed) {
+        console.log('used');
         return;
       }
-      /**
-       * Ausgewählten Würfel und Würfel mit
-       * geringerer Augenzahl von Tisch nehmen
-       */
+      //Move selected dice to used-area and remaining dice with less pips to tray
       this.tisch = this.tisch.reduce((tisch, wuerfel) => {
         if (wuerfel === ausgewaehlterWuerfel) {
-          this.verwendet.push(wuerfel);
+          this.used.push(wuerfel);
         } else if (wuerfel.value < ausgewaehlterWuerfel.value) {
-          this.tablett.push(wuerfel);
+          this.tray.push(wuerfel);
         } else {
           tisch.push(wuerfel);
         }
         return tisch;
       }, []);
 
-      if (this.verwendet.length >= 3) {
-        //Übrige Würfel auf Tablett legen und Tisch leeren
-        this.tablett.push(...this.tisch);
+      if (this.used.length >= 3) {
+        //Move remaining dice to tray and empty table
+        this.tray.push(...this.tisch);
         this.tisch = [];
-
-        // this.resetErforderlich = true;
       } else if (this.tisch.length) {
-        //Falls Tisch nicht leer, Wurf erforderlich
-        this.wuerfelVerwendet = true;
-      } else {
-        // this.resetErforderlich = true;
+        //If table not empty, roll required
+        this.diceUsed = true;
       }
-      this.hoverValue = null; //Zurücksetzen
+      this.hoverValue = null; //Reset
     },
     /**
      * Move all remaining dice from table to tray
      * (Special case, if player can not use another dice.)
      */
     discard() {
-      this.tablett.push(...this.tisch);
+      this.tray.push(...this.tisch);
       this.tisch = [];
-      // this.resetErforderlich = true;
     },
+    /**
+     * Move dice from tray back to table
+     * (Special action)
+     */
     reuse(wuerfel) {
-      const index = this.tablett.indexOf(wuerfel);
-      this.tablett.splice(index, 1);
+      const index = this.tray.indexOf(wuerfel);
+      this.tray.splice(index, 1);
       this.tisch.push(wuerfel);
       this.reuseUsed = true;
       this.reuseActive = false;
     },
+    /**
+     * Hovering dice (on table) shows which are removed by selecting one
+     */
     hoverWuerfel(wuerfel) {
       this.hoverValue = wuerfel ? wuerfel.value : null;
     },
-    reset(clearLog = false) {
-      if (clearLog) {
+    /**
+     * Reset component
+     * (Hard reset empties log)
+     */
+    reset(hard = false) {
+      if (hard) {
         this.log.length = 0; //Empty array without creating a new instance
       } else {
         this.log.unshift({
-          tablett: this.tablett,
-          verwendet: this.verwendet,
+          tray: this.tray,
+          used: this.used,
         });
       }
       Object.assign(this.$data, data(null, this.selectedTheme));

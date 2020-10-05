@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "node build.js && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --production",
-    "watch": "node ./node_modules/node-sass/bin/node-sass --watch ./scss/ -o ./docs/assets/css/"
+    "watch": "node build.js && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --watch"
   },
   "repository": {
     "type": "git",

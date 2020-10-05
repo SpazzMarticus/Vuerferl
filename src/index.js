@@ -31,10 +31,3 @@ new Vue({
         }
     }
 });
-
-
-new Vue();
-
-/**
- * @todo Lots of renaming and refactoring
- */
