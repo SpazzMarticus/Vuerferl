@@ -1,5 +1,4 @@
 const path = require('path');
-var webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 var config = {
@@ -23,9 +22,6 @@ var config = {
         ]
     },
     plugins: [
-        new webpack.DefinePlugin({
-            // 'process.env.NODE_ENV': JSON.stringify('production')
-        }),
         new VueLoaderPlugin()
     ]
 };

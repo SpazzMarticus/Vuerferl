@@ -16,8 +16,9 @@
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "build": "node build.js && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --production",
-    "watch": "node build.js && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --watch"
+    "build": "node ./node_modules/node-sass/bin/node-sass ./scss/ -o ./docs/assets/css/ && node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --production",
+    "watch-stylesheet": "node ./node_modules/node-sass/bin/node-sass --watch ./scss/ -o ./docs/assets/css/",
+    "watch-webpack": "node ./node_modules/webpack/bin/webpack.js -c ./webpack.config.js --watch"
   },
   "repository": {
     "type": "git",
