@@ -335,12 +335,18 @@ a {
 .header {
   color: #575757;
   text-align: center; }
-  .header h1, .header h2 {
+  .header h1,
+  .header h2 {
     margin-bottom: 0.5rem; }
   .header h2 {
     margin-top: 2rem; }
   .header p {
     margin: 0 0 1rem 0; }
+
+.player {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
 
 .play-area {
   display: grid;
@@ -439,6 +445,10 @@ button {
   button:focus {
     outline: 2px solid #0084cd; }
 
+.icon {
+  width: 1.66rem;
+  height: 1.66rem; }
+
 .button {
   background-color: #fdfdfd;
   padding: 0.33rem 0.66rem 0.33rem 0.66rem;
@@ -459,8 +469,6 @@ button {
     .button:disabled .icon {
       opacity: 0.5; }
   .button .icon {
-    width: 1.66rem;
-    height: 1.66rem;
     vertical-align: bottom;
     margin-top: -0.33rem;
     margin-bottom: -0.33rem; }
@@ -479,26 +487,53 @@ button {
 
 .settings {
   margin-bottom: 0.33rem; }
-  .settings .theme-selection {
+  .settings label {
+    cursor: pointer; }
+  .settings .theme-selection,
+  .settings .player-selection {
     background-color: #dedede;
     border-radius: 0.33rem;
     padding: 0.33rem;
     margin-bottom: 1rem; }
-  .settings .theme {
+    .settings .theme-selection > :first-child,
+    .settings .player-selection > :first-child {
+      margin-bottom: 1rem; }
+  .settings .player-selection .options {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap; }
+    @media screen and (max-width: 36.5rem) {
+      .settings .player-selection .options {
+        flex-direction: column;
+        align-content: center;
+        align-items: center; } }
+    .settings .player-selection .options > * {
+      margin-bottom: 0.5rem;
+      padding-right: 0.5rem; }
+  .settings .player-selection label {
+    display: flex; }
+    .settings .player-selection label input {
+      margin-right: 0.33rem; }
+  .settings .player-selection .icon {
+    width: 1.5rem;
+    height: 2rem; }
+  .settings .theme,
+  .settings .options {
     margin-bottom: 0.5rem;
     padding: 0.33rem; }
-    .settings .theme label {
+    .settings .theme label,
+    .settings .options label {
       display: flex;
       align-items: center; }
-    .settings .theme input {
+    .settings .theme input,
+    .settings .options input {
       margin-right: 0.33rem;
       flex-grow: 0; }
   .settings .dice-container {
     display: flex;
     flex: 1 1 auto;
     justify-content: space-evenly;
-    flex-wrap: wrap;
-    cursor: pointer; }
+    flex-wrap: wrap; }
   .settings .wuerfel {
     flex: 1 1 auto;
     margin: 0.1rem;
@@ -509,14 +544,20 @@ button {
 .log {
   margin-top: 1rem;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  color: #575757; }
   .log .log-entry {
     display: inline-grid;
-    grid-template-columns: 1fr repeat(6, 2fr);
+    grid-template-columns: 1fr 1fr repeat(6, 2fr);
     align-items: center;
     align-content: space-evenly;
     justify-content: center;
-    margin: 0 auto 0.25rem auto; }
+    margin: 0 auto 0.25rem auto;
+    white-space: nowrap; }
+    .log .log-entry .icon {
+      width: 1rem;
+      margin-top: -0.33rem;
+      margin-bottom: -0.33rem; }
   .log .index,
   .log .selected,
   .log .tray {
@@ -525,12 +566,12 @@ button {
     background-color: #3b3a42; }
   .log .tray {
     background-color: #cccccc; }
-  .log .log-entry .selected:nth-child(2) {
+  .log .log-entry .selected:nth-child(3) {
     border-radius: 0.33rem 0 0 0.33rem; }
   .log .log-entry .tray:last-child {
     border-radius: 0 0.33rem 0.33rem 0; }
   .log .wuerfel {
-    margin: 0.1rem;
+    margin: 0.1rem auto;
     max-width: 2.31rem;
     max-height: 2.31rem; }
 

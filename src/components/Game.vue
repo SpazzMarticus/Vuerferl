@@ -1,5 +1,8 @@
 <template>
   <div>
+    <p class="player" v-if="playerCount > 1">
+      <img class="icon" src="assets/img/person.svg" /> {{ activePlayer }}
+    </p>
     <div class="play-area">
       <div class="selected">
         <div class="dice-container">
@@ -135,6 +138,10 @@
     <div class="log" v-if="log.length > 0">
       <div v-for="(entry, index) in log" class="log-entry" :key="index">
         <div class="index">#{{ log.length - index }}</div>
+        <div class="index">
+          <img class="icon" src="assets/img/person.svg" />
+          {{ ((log.length - 1 - index) % playerCount) + 1 }}
+        </div>
         <div
           v-for="(wuerfel, index) in entry.used"
           :key="'s' + index"
@@ -191,7 +198,7 @@ function Wuerfel(color, pipColor) {
 
 const log = [];
 
-const data = function (vue, selectedTheme) {
+const data = function (vue, activePlayer = 1) {
   return {
     /**
      * dice
@@ -205,10 +212,10 @@ const data = function (vue, selectedTheme) {
     pristine: true,
     diceUsed: true,
     rollInProgress: false,
-    selectedTheme,
     hoverValue: null,
     reuseActive: false,
     reuseUsed: false,
+    activePlayer,
     /**
      * log-entries
      */
@@ -222,6 +229,10 @@ export default {
     theme: {
       required: true,
       type: Object,
+    },
+    playerCount: {
+      required: true,
+      type: Number,
     },
   },
   data,
@@ -237,7 +248,7 @@ export default {
         (this.diceUsed || this.reuseUsed || this.tisch.length === 0)
       );
     },
-    actionAvailableUse(){
+    actionAvailableUse() {
       return !this.rollRequired;
     },
     actionAvailableReroll() {
@@ -277,6 +288,7 @@ export default {
     },
     roll() {
       this.pristine = false;
+      this.reuseActive = false;
       this.reuseUsed = false;
       this.rollInProgress = true;
       if (!this.tisch.length) {
@@ -308,12 +320,12 @@ export default {
     verwenden(ausgewaehlterWuerfel) {
       //While dice are rolling, don't use them
       if (ausgewaehlterWuerfel.rolling) {
-        console.log('rolling');
-                return;
+        console.log("rolling");
+        return;
       }
       //Vor der Verwendung muss gewürfelt werden
       if (this.diceUsed) {
-        console.log('used');
+        console.log("used");
         return;
       }
       //Move selected dice to used-area and remaining dice with less pips to tray
@@ -365,18 +377,25 @@ export default {
     },
     /**
      * Reset component
-     * (Hard reset empties log)
+     * (Hard reset empties log and reset active player)
      */
     reset(hard = false) {
       if (hard) {
         this.log.length = 0; //Empty array without creating a new instance
+        this.activePlayer = 1;
       } else {
         this.log.unshift({
           tray: this.tray,
           used: this.used,
         });
+        //Calculate player count
+        this.activePlayer++;
+        if (this.activePlayer > this.playerCount) {
+          this.activePlayer = 1;
+        }
       }
-      Object.assign(this.$data, data(null, this.selectedTheme));
+
+      Object.assign(this.$data, data(null, this.activePlayer));
     },
   },
 };

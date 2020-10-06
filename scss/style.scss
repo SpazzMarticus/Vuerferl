@@ -8,7 +8,6 @@ $defaultBorderRadius: 0.33rem;
 $diceSize: 3.5rem;
 $gridGap: 1rem;
 
-
 $themeBackground: #fdfdfd;
 $themeLinkColor: #0084cd;
 $themeTextLight: #575757;
@@ -17,6 +16,7 @@ $themeTable: #d1b494;
 $themeTray: #cccccc;
 $themeSettings: #dedede;
 
+$minWidthSmall: (2*$bodyPadding)+(4*$playAreaPadding)+(2*$playAreaSelectedMargin)+(6*$gridGap)+(7*$diceSize);
 
 
 html {
@@ -61,17 +61,24 @@ a {
   color: $themeTextLight;
   text-align: center;
 
-  h1,h2 {
+  h1,
+  h2 {
     margin-bottom: 0.5rem;
   }
 
-  h2{
+  h2 {
     margin-top: 2rem;
   }
 
   p {
     margin: 0 0 1rem 0;
   }
+}
+
+.player{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .play-area {
@@ -150,7 +157,7 @@ a {
     background-color: $themeTable;
     border-radius: 0;
 
-    .button-container{
+    .button-container {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       justify-content: space-between;
@@ -171,7 +178,7 @@ a {
     }
   }
 
-  @media screen and (min-width: (2*$bodyPadding) + (4*$playAreaPadding) + (2*$playAreaSelectedMargin) + (6*$gridGap) + (7*$diceSize)) {
+  @media screen and (min-width: $minWidthSmall) {
 
     grid-template-areas:
       "selected table"
@@ -227,16 +234,21 @@ a {
   }
 }
 
-button{
+button {
   margin: 0;
   padding: 0;
   border: none;
   background-color: transparent;
-  &:focus{
+
+  &:focus {
     outline: 2px solid $themeLinkColor;
   }
 }
 
+.icon {
+  width: 1.66rem;
+  height: 1.66rem;
+}
 
 .button {
   background-color: $themeBackground;
@@ -248,10 +260,10 @@ button{
   vertical-align: baseline;
 
   @media (-webkit-min-device-pixel-ratio: 2),
-    (min-resolution: 192dpi) {
-      padding: 0.66rem 1rem 0.66rem 1rem;
-      margin: 0.33rem;
-    }
+  (min-resolution: 192dpi) {
+    padding: 0.66rem 1rem 0.66rem 1rem;
+    margin: 0.33rem;
+  }
 
   &:hover {}
 
@@ -268,8 +280,6 @@ button{
   }
 
   .icon {
-    width: 1.66rem;
-    height: 1.66rem;
     vertical-align: bottom;
     margin-top: -0.33rem;
     margin-bottom: -0.33rem;
@@ -296,18 +306,62 @@ button{
   }
 }
 
-
 .settings {
   margin-bottom: 0.33rem;
 
-  .theme-selection {
+  label {
+    cursor: pointer;
+  }
+
+  .theme-selection,
+  .player-selection {
     background-color: $themeSettings;
     border-radius: $defaultBorderRadius;
     padding: 0.33rem;
     margin-bottom: 1rem;
+
+    > :first-child {
+      margin-bottom: 1rem;
+    }
   }
 
-  .theme {
+  .player-selection {
+    .options {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+
+      @media screen and (max-width: $minWidthSmall +1) {
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+      }
+
+
+      >* {
+        margin-bottom: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    }
+
+    label {
+      display: flex;
+
+      input {
+        margin-right: 0.33rem;
+      }
+    }
+
+    .icon {
+      width: 1.5rem;
+      height: 2rem;
+    }
+  }
+
+
+
+  .theme,
+  .options {
     margin-bottom: 0.5rem;
     padding: 0.33rem;
 
@@ -327,8 +381,6 @@ button{
     flex: 1 1 auto;
     justify-content: space-evenly;
     flex-wrap: wrap;
-
-    cursor: pointer;
   }
 
   .wuerfel {
@@ -344,14 +396,22 @@ button{
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
+  color: $themeTextLight;
 
   .log-entry {
     display: inline-grid;
-    grid-template-columns: 1fr repeat(6, 2fr);
+    grid-template-columns: 1fr 1fr repeat(6, 2fr);
     align-items: center;
     align-content: space-evenly;
     justify-content: center;
     margin: 0 auto 0.25rem auto;
+    white-space: nowrap;
+
+    .icon{
+      width: 1rem;
+      margin-top: -0.33rem;
+      margin-bottom: -0.33rem;
+    }
   }
 
   .index,
@@ -370,7 +430,7 @@ button{
 
   .log-entry {
     .selected {
-      &:nth-child(2) {
+      &:nth-child(3) {
         border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
       }
     }
@@ -383,7 +443,7 @@ button{
   }
 
   .wuerfel {
-    margin: 0.1rem;
+    margin: 0.1rem auto;
     max-width: $diceSize *0.66;
     max-height: $diceSize * 0.66;
   }

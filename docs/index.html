@@ -32,6 +32,18 @@
 
             <div class="settings" v-if="!running">
 
+                <div class="player-selection">
+                    <div class="center">Player count</div>
+                    <div class="options">
+                        <div v-for="count in 4" :key="count">
+                            <label>
+                                <input type="radio" v-model.number="playerCount" :value="count">
+                                <img v-for="img in count" class="icon" src="assets/img/person.svg">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="theme-selection">
                     <div class="center">Themes</div>
                     <div v-for="(theme, index) in themes" class="theme">
@@ -39,7 +51,7 @@
                             <input v-model="selectedTheme" type="radio" :value="index">
                             <div class="dice-container">
                                 <wuerfel v-for="(colors,index) in theme.colors" :key="index" :color="colors.color"
-                                    :pip-color="colors.pipColor" :value="6-index">&nbsp;</wuerfel>
+                                    :pip-color="colors.pipColor" :value="6-index"></wuerfel>
                             </div>
                         </label>
                     </div>
@@ -53,7 +65,7 @@
                 </div>
             </div>
 
-            <game :theme="themes[selectedTheme]" v-show="running" ref="game"></game>
+            <game :theme="themes[selectedTheme]" :player-count="playerCount" v-show="running" ref="game"></game>
 
             <div class="reset-container center" v-show="running">
                 <dropdown style="display: inline-block" ref="reset">

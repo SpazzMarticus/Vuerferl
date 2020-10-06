@@ -12,6 +12,7 @@ new Vue({
         return {
             themes,
             selectedTheme: 0,
+            playerCount: 2,
             running: false,
         };
     },
@@ -19,10 +20,14 @@ new Vue({
         if (localStorage.selectedTheme && this.themes[localStorage.selectedTheme]) {
             this.selectedTheme = localStorage.selectedTheme;
         }
+        if (localStorage.playerCount && (1 <= localStorage.playerCount <= 4)) {
+            this.playerCount = parseInt(localStorage.playerCount);
+        }
     },
     methods: {
         run() {
             localStorage.selectedTheme = this.selectedTheme;
+            localStorage.playerCount = this.playerCount;
             this.running = true;
         },
         reset() {
