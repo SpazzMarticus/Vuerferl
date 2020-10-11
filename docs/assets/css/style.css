@@ -343,10 +343,20 @@ a {
   .header p {
     margin: 0 0 1rem 0; }
 
-.player {
+.game-info {
   display: flex;
-  align-items: center;
-  justify-content: center; }
+  justify-content: space-around; }
+  .game-info .player {
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+
+.end-game {
+  margin: 2rem 0;
+  text-align: center;
+  font-size: 2rem;
+  font-style: italic;
+  color: #575757; }
 
 .play-area {
   display: grid;
@@ -558,6 +568,16 @@ button {
       width: 1rem;
       margin-top: -0.33rem;
       margin-bottom: -0.33rem; }
+    .log .log-entry > *:nth-child(3) {
+      border-radius: 0.33rem 0 0 0.33rem; }
+    .log .log-entry > *:last-child {
+      border-radius: 0 0.33rem 0.33rem 0; }
+  .log.single .log-entry {
+    grid-template-columns: 1fr repeat(6, 2fr); }
+    .log.single .log-entry > *:nth-child(2) {
+      border-radius: 0.33rem 0 0 0.33rem; }
+    .log.single .log-entry > *:nth-child(3) {
+      border-radius: 0; }
   .log .index,
   .log .selected,
   .log .tray {
@@ -566,10 +586,6 @@ button {
     background-color: #3b3a42; }
   .log .tray {
     background-color: #cccccc; }
-  .log .log-entry .selected:nth-child(3) {
-    border-radius: 0.33rem 0 0 0.33rem; }
-  .log .log-entry .tray:last-child {
-    border-radius: 0 0.33rem 0.33rem 0; }
   .log .wuerfel {
     margin: 0.1rem auto;
     max-width: 2.31rem;

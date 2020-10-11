@@ -75,10 +75,23 @@ a {
   }
 }
 
-.player{
+.game-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-around;
+
+  .player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.end-game {
+  margin: 2rem 0;
+  text-align: center;
+  font-size: 2rem;
+  font-style: italic;
+  color: $themeTextLight;
 }
 
 .play-area {
@@ -407,10 +420,39 @@ button {
     margin: 0 auto 0.25rem auto;
     white-space: nowrap;
 
-    .icon{
+    .icon {
       width: 1rem;
       margin-top: -0.33rem;
       margin-bottom: -0.33rem;
+    }
+
+    >* {
+      &:nth-child(3) {
+        border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
+      }
+
+      &:last-child {
+        border-radius: 0 $defaultBorderRadius $defaultBorderRadius 0;
+      }
+    }
+
+
+
+  }
+
+  &.single {
+    .log-entry {
+      grid-template-columns: 1fr repeat(6, 2fr);
+
+      >* {
+        &:nth-child(2) {
+          border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
+        }
+
+        &:nth-child(3) {
+          border-radius: 0;
+        }
+      }
     }
   }
 
@@ -426,20 +468,6 @@ button {
 
   .tray {
     background-color: $themeTray;
-  }
-
-  .log-entry {
-    .selected {
-      &:nth-child(3) {
-        border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
-      }
-    }
-
-    .tray {
-      &:last-child {
-        border-radius: 0 $defaultBorderRadius $defaultBorderRadius 0;
-      }
-    }
   }
 
   .wuerfel {

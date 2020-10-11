@@ -1,144 +1,150 @@
 <template>
   <div>
-    <p class="player" v-if="playerCount > 1">
-      <img class="icon" src="assets/img/person.svg" /> {{ activePlayer }}
-    </p>
-    <div class="play-area">
-      <div class="selected">
-        <div class="dice-container">
-          <div v-for="wuerfel in used" :key="wuerfel.color">
-            <wuerfel
-              :color="wuerfel.color"
-              :pip-color="wuerfel.pipColor"
-              :value="wuerfel.value"
-            >
-            </wuerfel>
-          </div>
-          <div
-            v-for="index in 3 - used.length"
-            :key="'e' + index"
-            class="wuerfel wuerfel-empty"
-          ></div>
-        </div>
+    <div v-if="round <= roundCount">
+      <div class="game-info">
+        <p class="player" v-if="playerCount > 1">
+          Player&nbsp;<strong>{{ activePlayer }}</strong>
+        </p>
+        <p class="round">Round&nbsp;<strong>{{ round }}/{{ roundCount }}</strong></p>
       </div>
-      <div class="table">
-        <dropdown
-          class="button-container"
-          ref="actions"
-          :hide="!actionAvailable"
-        >
-          <template v-slot:portalBefore>
-            <div>
+      <div class="play-area">
+        <div class="selected">
+          <div class="dice-container">
+            <div v-for="wuerfel in used" :key="wuerfel.color">
+              <wuerfel
+                :color="wuerfel.color"
+                :pip-color="wuerfel.pipColor"
+                :value="wuerfel.value"
+              >
+              </wuerfel>
+            </div>
+            <div
+              v-for="index in 3 - used.length"
+              :key="'e' + index"
+              class="wuerfel wuerfel-empty"
+            ></div>
+          </div>
+        </div>
+        <div class="table">
+          <dropdown
+            class="button-container"
+            ref="actions"
+            :hide="!actionAvailable"
+          >
+            <template v-slot:portalBefore>
+              <div>
+                <button
+                  class="button"
+                  @click="
+                    closeDropdown();
+                    roll();
+                  "
+                  v-show="rollRequired"
+                  :disabled="rollInProgress"
+                >
+                  <img src="assets/img/rolling-dice-cup.svg" class="icon" />
+                  Roll
+                </button>
+              </div>
+            </template>
+            <template v-slot:button> Actions... </template>
+            <template v-slot:drop>
               <button
                 class="button"
                 @click="
                   closeDropdown();
                   roll();
                 "
-                v-show="rollRequired"
+                v-show="actionAvailableReroll"
                 :disabled="rollInProgress"
               >
-                <img src="assets/img/rolling-dice-cup.svg" class="icon" />
-                Roll
+                <img src="assets/img/cycle.svg" class="icon" />
+                Reroll
               </button>
-            </div>
-          </template>
-          <template v-slot:button> Actions... </template>
-          <template v-slot:drop>
-            <button
-              class="button"
-              @click="
-                closeDropdown();
-                roll();
-              "
-              v-show="actionAvailableReroll"
-              :disabled="rollInProgress"
-            >
-              <img src="assets/img/cycle.svg" class="icon" />
-              Reroll
-            </button>
-            <button
-              class="button"
-              v-if="actionAvailableReuse"
-              @click="
-                closeDropdown();
-                reuseActive = true;
-              "
-            >
-              <img src="assets/img/return-dice.svg" class="icon" />
-              Reuse
-            </button>
-            <button
-              class="button"
-              v-if="actionAvailableDiscard"
-              @click="
-                closeDropdown();
-                discard();
-              "
-            >
-              <img src="assets/img/trash-can.svg" class="icon" />
-              Discard
-            </button>
-          </template>
-          <template v-slot:portalAfter>
-            <div class="right">
               <button
                 class="button"
-                @click="reset(false)"
-                v-show="resetErforderlich"
+                v-if="actionAvailableReuse"
+                @click="
+                  closeDropdown();
+                  reuseActive = true;
+                "
               >
-                <img src="assets/img/player-next.svg" class="icon" />
-                Next player
+                <img src="assets/img/return-dice.svg" class="icon" />
+                Reuse
               </button>
-            </div>
-          </template>
-        </dropdown>
+              <button
+                class="button"
+                v-if="actionAvailableDiscard"
+                @click="
+                  closeDropdown();
+                  discard();
+                "
+              >
+                <img src="assets/img/trash-can.svg" class="icon" />
+                Discard
+              </button>
+            </template>
+            <template v-slot:portalAfter>
+              <div class="right">
+                <button
+                  class="button"
+                  @click="reset(false)"
+                  v-show="resetErforderlich"
+                >
+                  <img src="assets/img/player-next.svg" class="icon" />
+                  Next player
+                </button>
+              </div>
+            </template>
+          </dropdown>
 
-        <div class="dice-container" :class="{ usable: actionAvailableUse }">
-          <wuerfel
-            v-for="(wuerfel, index) in tisch"
-            :key="index"
-            :color="wuerfel.color"
-            :pip-color="wuerfel.pipColor"
-            :value="wuerfel.value"
-            :to-be-removed="
-              actionAvailableUse && hoverValue && wuerfel.value < hoverValue
-            "
-            :mouse-events="actionAvailableUse"
-            @click="
-              closeDropdown();
-              verwenden(wuerfel);
-            "
-            @mouseover="hoverWuerfel(wuerfel)"
-            @mouseleave="hoverWuerfel(null)"
-          >
-          </wuerfel>
+          <div class="dice-container" :class="{ usable: actionAvailableUse }">
+            <wuerfel
+              v-for="(wuerfel, index) in tisch"
+              :key="index"
+              :color="wuerfel.color"
+              :pip-color="wuerfel.pipColor"
+              :value="wuerfel.value"
+              :to-be-removed="
+                actionAvailableUse && hoverValue && wuerfel.value < hoverValue
+              "
+              :mouse-events="actionAvailableUse"
+              @click="
+                closeDropdown();
+                verwenden(wuerfel);
+              "
+              @mouseover="hoverWuerfel(wuerfel)"
+              @mouseleave="hoverWuerfel(null)"
+            >
+            </wuerfel>
+          </div>
         </div>
-      </div>
-      <div class="tray">
-        <div class="center" v-if="reuseActive">Select dice to reuse.</div>
-        <div class="dice-container" :class="{ usable: reuseActive }">
-          <wuerfel
-            v-for="(wuerfel, index) in tray"
-            :key="index"
-            :color="wuerfel.color"
-            :pip-color="wuerfel.pipColor"
-            :value="wuerfel.value"
-            :mouse-events="reuseActive"
-            @click="
-              closeDropdown();
-              reuse(wuerfel);
-            "
-          >
-          </wuerfel>
+        <div class="tray">
+          <div class="center" v-if="reuseActive">Select dice to reuse.</div>
+          <div class="dice-container" :class="{ usable: reuseActive }">
+            <wuerfel
+              v-for="(wuerfel, index) in tray"
+              :key="index"
+              :color="wuerfel.color"
+              :pip-color="wuerfel.pipColor"
+              :value="wuerfel.value"
+              :mouse-events="reuseActive"
+              @click="
+                closeDropdown();
+                reuse(wuerfel);
+              "
+            >
+            </wuerfel>
+          </div>
         </div>
       </div>
     </div>
+    <div v-else class="end-game">The End</div>
 
-    <div class="log" v-if="log.length > 0">
+    <div class="log" :class="{single:playerCount===1}" v-if="log.length > 0">
       <div v-for="(entry, index) in log" class="log-entry" :key="index">
         <div class="index">#{{ log.length - index }}</div>
-        <div class="index">
+        <div class="index" v-if="playerCount > 1">
           <img class="icon" src="assets/img/person.svg" />
           {{ ((log.length - 1 - index) % playerCount) + 1 }}
         </div>
@@ -270,6 +276,12 @@ export default {
         this.actionAvailableDiscard ||
         this.actionAvailableReuse
       );
+    },
+    round() {
+      return Math.floor(this.log.length / this.playerCount) + 1;
+    },
+    roundCount() {
+      return this.playerCount > 2 ? (this.playerCount > 3 ? 4 : 5) : 6;
     },
   },
   methods: {
