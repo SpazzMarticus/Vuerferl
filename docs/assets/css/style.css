@@ -353,10 +353,11 @@ a {
 
 .end-game {
   margin: 2rem 0;
-  text-align: center;
-  font-size: 2rem;
-  font-style: italic;
-  color: #575757; }
+  text-align: center; }
+  .end-game .the-end {
+    font-size: 2rem;
+    font-style: italic;
+    color: #575757; }
 
 .play-area {
   display: grid;

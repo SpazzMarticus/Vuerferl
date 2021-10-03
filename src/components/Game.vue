@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="round <= roundCount">
+    <div v-if="!gameEnded">
       <div class="game-info">
         <p class="player" v-if="playerCount > 1">
           Player&nbsp;<strong>{{ activePlayer }}</strong>
@@ -139,7 +139,13 @@
         </div>
       </div>
     </div>
-    <div v-else class="end-game">The End</div>
+    <div v-else class="end-game">
+      <span class="the-end">The End<br></span>
+      <button class="button" @click="reset(true)">
+        <img src="assets/img/anticlockwise-rotation.svg" class="icon" />
+          Play again
+      </button>
+    </div>
 
     <div class="log" :class="{single:playerCount===1}" v-if="log.length > 0">
       <div v-for="(entry, index) in log" class="log-entry" :key="index">
@@ -283,6 +289,9 @@ export default {
     roundCount() {
       return this.playerCount > 2 ? (this.playerCount > 3 ? 4 : 5) : 6;
     },
+    gameEnded(){
+      return !(this.round <= this.roundCount);
+    }
   },
   methods: {
     fillTable() {
@@ -392,7 +401,6 @@ export default {
      * (Hard reset empties log and reset active player)
      */
     reset(hard = false) {
-      console.log('reset',hard);
       if (hard) {
         /**
          * Empty array without creating a new instance
