@@ -392,8 +392,13 @@ export default {
      * (Hard reset empties log and reset active player)
      */
     reset(hard = false) {
+      console.log('reset',hard);
       if (hard) {
-        this.log.length = 0; //Empty array without creating a new instance
+        /**
+         * Empty array without creating a new instance
+         * https://vuejs.org/v2/guide/reactivity.html#For-Arrays
+         */
+        this.log.splice(0);
         this.activePlayer = 1;
       } else {
         this.log.unshift({
